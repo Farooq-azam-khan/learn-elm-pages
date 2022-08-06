@@ -7,15 +7,9 @@ import Html exposing (Html)
 -- View type must have exactly 1 type variable
 
 
-type PageLayout
-    = LandingPage
-    | HomePage
-
-
 type alias View msg =
     { title : String
     , body : List (Html msg)
-    , layout : PageLayout
     }
 
 
@@ -25,7 +19,6 @@ map fn view_doc =
 
     -- convert all Html msg1 to Html msg2
     , body = List.map (Html.map fn) view_doc.body
-    , layout = view_doc.layout
     }
 
 
@@ -37,5 +30,4 @@ placeholder : String -> View msg
 placeholder moduleName =
     { title = "Placeholder - " ++ moduleName
     , body = [ Html.text moduleName ]
-    , layout = LandingPage
     }
