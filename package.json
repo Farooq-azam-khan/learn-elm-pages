@@ -1,7 +1,7 @@
 {
   "name": "elm-pages-app",
   "scripts": {
-    "postinstall": "elm-tooling install",
+    "remove-postinstall": "elm-tooling install",
     "start": "elm-pages dev",
     "dev": "elm-pages dev", 
     "build": "elm-pages build"
