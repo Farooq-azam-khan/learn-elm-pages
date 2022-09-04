@@ -10,7 +10,7 @@ import Html.Events exposing (..)
 import Html.Parser exposing (Node(..))
 import Html.Parser.Util
 import Json.Encode as Encode
-import Katex exposing (Latex, display, human, inline)
+-- import Katex exposing (Latex, display, human, inline)
 import OptimizedDecoder as Decode
 import Page exposing (PageWithState, StaticPayload)
 import Pages.PageUrl exposing (PageUrl)
@@ -111,7 +111,7 @@ head static =
         }
         |> Seo.website
 
-
+{-
 passage : List Latex
 passage =
     [ human "We denote by "
@@ -120,6 +120,7 @@ passage =
     , display "\\Gamma \\vDash \\phi"
     ]
 
+-}
 
 view :
     Maybe PageUrl
@@ -129,11 +130,6 @@ view :
     -> View Msg
 view maybeUrl sharedModel model static =
     let
-        _ =
-            Debug.log "maybe url" maybeUrl
-
-        _ =
-            Debug.log "redering view...."
 
         formulas =
             List.map

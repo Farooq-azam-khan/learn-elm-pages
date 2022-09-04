@@ -68,8 +68,4 @@ view :
     -> StaticPayload Data RouteParams
     -> View Msg
 view maybeUrl sharedModel static =
-    let
-        _ =
-            Debug.log "maybeUrl" maybeUrl
-    in
     View.placeholder "Index"
