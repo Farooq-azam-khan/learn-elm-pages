@@ -6,7 +6,8 @@ module.exports = {
        */
     parse_katex: async function (formula) {
         console.log({ formula })
-        const val = katex.renderToString('a^2+b^2=c^2', {
+        const val = katex.renderToString(formula, {
+            displayMode: true,
             throwOnError: true
         })
         return val

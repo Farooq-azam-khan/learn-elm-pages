@@ -1,7 +1,5 @@
 port module Page.MachineLearningBasics exposing (Data, Model, Msg, page)
 
--- import MiniLatex.Edit exposing (LaTeXMsg)
-
 import DataSource exposing (DataSource)
 import DataSource.Port as Dport
 import Head
@@ -73,7 +71,7 @@ subscriptions maybe_page_url route_params path shared_model model =
 
 
 type alias Data =
-    String
+    List String
 
 
 
@@ -82,9 +80,16 @@ type alias Data =
 
 data : DataSource Data
 data =
-    Dport.get "parse_katex"
-        (Encode.string "a^2+b^2=c^2")
-        Decode.string
+    DataSource.combine
+        [ Dport.get "parse_katex"
+            (Encode.string "a^2+b^2=c^2")
+            Decode.string
+        , Dport.get "parse_katex"
+            (Encode.string """\\begin{bmatrix*}[r] 0 & -1 \\\\ 
+-1 & 0 
+\\end{bmatrix*}""")
+            Decode.string
+        ]
 
 
 head :
@@ -130,20 +135,21 @@ view maybeUrl sharedModel model static =
         _ =
             Debug.log "redering view...."
 
-        formula =
-            case Html.Parser.run static.data of
-                Ok html_formula ->
-                    html_formula
+        formulas =
+            List.map
+                (\formula ->
+                    case Html.Parser.run formula of
+                        Ok html_formula ->
+                            Html.Parser.Util.toVirtualDom html_formula
 
-                Err _ ->
-                    [ Text "error parsing formula " ]
-
-        formula_html =
-            Debug.log "parsed formula" <| Html.Parser.Util.toVirtualDom formula
+                        Err _ ->
+                            Html.Parser.Util.toVirtualDom [ Text "error parsing formula " ]
+                )
+                static.data
     in
     { title = "Machine Learning Basics"
     , body =
         [ div [] [ h2 [] [ text "Machine Learning" ] ]
-        , div [] formula_html
+        , div [] (List.map (\form -> div [] form) formulas)
         ]
     }
