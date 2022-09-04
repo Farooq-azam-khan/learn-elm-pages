@@ -104,16 +104,6 @@ view :
     -> View msg
     -> { body : Html msg, title : String }
 view sharedData page model toMsg pageView =
-    let
-        _ =
-            Debug.log "sharedData" sharedData
-
-        _ =
-            Debug.log "page" page
-
-        _ =
-            Debug.log "model" model
-    in
     { body = Html.div [] pageView.body
     , title = pageView.title
     }

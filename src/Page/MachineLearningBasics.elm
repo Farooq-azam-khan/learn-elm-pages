@@ -1,12 +1,19 @@
-module Page.MachineLearningBasics exposing (Data, Model, Msg, page)
+port module Page.MachineLearningBasics exposing (Data, Model, Msg, page)
+
+-- import MiniLatex.Edit exposing (LaTeXMsg)
 
 import DataSource exposing (DataSource)
+import DataSource.Port as Dport
 import Head
 import Head.Seo as Seo
 import Html exposing (..)
-import Katex as K exposing (Latex, display, human, inline)
-import MiniLatex
-import MiniLatex.Edit exposing (LaTeXMsg)
+import Html.Attributes exposing (property)
+import Html.Events exposing (..)
+import Html.Parser exposing (Node(..))
+import Html.Parser.Util
+import Json.Encode as Encode
+import Katex exposing (Latex, display, human, inline)
+import OptimizedDecoder as Decode
 import Page exposing (PageWithState, StaticPayload)
 import Pages.PageUrl exposing (PageUrl)
 import Pages.Url
@@ -14,21 +21,12 @@ import Shared
 import View exposing (View)
 
 
-passage : List Latex
-passage =
-    [ human "We denote by "
-    , inline "\\phi"
-    , human " the formula for which "
-    , display "\\Gamma \\vDash \\phi"
-    ]
-
-
 type alias Model =
     {}
 
 
 type Msg
-    = LatexToHtml LaTeXMsg
+    = RenderLatexMsg
 
 
 type alias RouteParams =
@@ -56,26 +54,26 @@ init maybe_pageurl shared_model static_payload =
     ( {}, Cmd.none )
 
 
+port renderLatex : String -> Cmd msg
+
+
 update pageurl maybe_nav_key shared_model static_payload msg model =
     case msg of
-        LatexToHtml ltxmsg ->
-            let
-                _ =
-                    Debug.log "ltxmsg" ltxmsg
-            in
-            ( model, Cmd.none, Nothing )
+        RenderLatexMsg ->
+            ( model, renderLatex "", Nothing )
 
 
 
--- ( model, Cmd.none, Nothing )
+--
 
 
+subscriptions : a -> b -> c -> d -> e -> Sub msg
 subscriptions maybe_page_url route_params path shared_model model =
     Sub.none
 
 
 type alias Data =
-    {}
+    String
 
 
 
@@ -84,7 +82,9 @@ type alias Data =
 
 data : DataSource Data
 data =
-    DataSource.succeed {}
+    Dport.get "parse_katex"
+        (Encode.string "a^2+b^2=c^2")
+        Decode.string
 
 
 head :
@@ -107,6 +107,15 @@ head static =
         |> Seo.website
 
 
+passage : List Latex
+passage =
+    [ human "We denote by "
+    , inline "\\phi"
+    , human " the formula for which "
+    , display "\\Gamma \\vDash \\phi"
+    ]
+
+
 view :
     Maybe PageUrl
     -> Shared.Model
@@ -115,40 +124,26 @@ view :
     -> View Msg
 view maybeUrl sharedModel model static =
     let
-        htmlGenerator isDisplayMode stringLatex =
-            case isDisplayMode of
-                Just True ->
-                    Html.div [] [ text stringLatex ]
-
-                _ ->
-                    span [] [ text stringLatex ]
+        _ =
+            Debug.log "maybe url" maybeUrl
 
         _ =
-            Debug.log "parse" (MiniLatex.parse txt)
+            Debug.log "redering view...."
 
-        _ =
-            Debug.log "render" (MiniLatex.render txt txt)
+        formula =
+            case Html.Parser.run static.data of
+                Ok html_formula ->
+                    html_formula
+
+                Err _ ->
+                    [ Text "error parsing formula " ]
+
+        formula_html =
+            Debug.log "parsed formula" <| Html.Parser.Util.toVirtualDom formula
     in
     { title = "Machine Learning Basics"
     , body =
         [ div [] [ h2 [] [ text "Machine Learning" ] ]
-
-        -- , passage |> List.map (K.generate htmlGenerator) |> div []
-        , text txt
-        , Html.map LatexToHtml (MiniLatex.render txt txt) -- |> Html.map mp_latex
+        , div [] formula_html
         ]
     }
-
-
-mp_latex : LaTeXMsg -> Msg
-mp_latex x =
-    let
-        _ =
-            Debug.log "latex:" x
-    in
-    LatexToHtml x
-
-
-txt : String
-txt =
-    "Pythagoras says: $a^2 + b^2 = c^2$"
