@@ -53,7 +53,7 @@ head static =
             }
         , description = "TODO"
         , locale = Nothing
-        , title = "TODO title" -- metadata.title -- TODO
+        , title = "Index Page" 
         }
         |> Seo.website
 
