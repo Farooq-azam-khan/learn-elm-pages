@@ -10,7 +10,6 @@ import Html.Events exposing (..)
 import Html.Parser exposing (Node(..))
 import Html.Parser.Util
 import Json.Encode as Encode
--- import Katex exposing (Latex, display, human, inline)
 import OptimizedDecoder as Decode
 import Page exposing (PageWithState, StaticPayload)
 import Pages.PageUrl exposing (PageUrl)
@@ -34,11 +33,8 @@ type alias RouteParams =
 page : PageWithState RouteParams Data {} Msg
 page =
     Page.single
-        -- prerender
         { head = head
         , data = data
-
-        -- , routes = DataSource.succeed []
         }
         |> Page.buildWithSharedState
             { view = view
@@ -62,8 +58,6 @@ update pageurl maybe_nav_key shared_model static_payload msg model =
 
 
 
---
-
 
 subscriptions : a -> b -> c -> d -> e -> Sub msg
 subscriptions maybe_page_url route_params path shared_model model =
@@ -72,10 +66,6 @@ subscriptions maybe_page_url route_params path shared_model model =
 
 type alias Data =
     List String
-
-
-
--- data : RouteParams -> DataSource Data
 
 
 data : DataSource Data
@@ -107,20 +97,10 @@ head static =
             }
         , description = "TODO"
         , locale = Nothing
-        , title = "machine learning basics" -- metadata.title -- TODO
+        , title = "machine learning basics"
         }
         |> Seo.website
 
-{-
-passage : List Latex
-passage =
-    [ human "We denote by "
-    , inline "\\phi"
-    , human " the formula for which "
-    , display "\\Gamma \\vDash \\phi"
-    ]
-
--}
 
 view :
     Maybe PageUrl

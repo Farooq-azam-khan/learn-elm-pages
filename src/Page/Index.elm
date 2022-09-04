@@ -68,4 +68,9 @@ view :
     -> StaticPayload Data RouteParams
     -> View Msg
 view maybeUrl sharedModel static =
-    View.placeholder "Index"
+    {
+        title = "Index Page For Blog",
+        body = [
+            a [href "/machine-learning-basics"] [text "Machine Learning Basics"]
+        ] 
+    }
