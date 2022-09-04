@@ -5,7 +5,7 @@ module.exports = {
        * @returns { Promise<unknown> }
        */
     parse_katex: async function (formula) {
-        console.log({ formula })
+        // console.log({ formula })
         const val = katex.renderToString(formula, {
             displayMode: true,
             throwOnError: true
