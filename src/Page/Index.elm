@@ -10,7 +10,8 @@ import Pages.PageUrl exposing (PageUrl)
 import Pages.Url
 import Shared
 import View exposing (View)
-
+import Html exposing (..)
+import Html.Attributes exposing (..)
 
 type alias Model =
     ()
